@@ -166,4 +166,26 @@ class UserManagementController extends Controller
             'user' => $user
         ]);
     }
+
+     public function changePassword(Request $request, $id) {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found.'
+            ], 404);
+        }
+
+        $validated = $request->validate([
+            'password' => 'required|string|min:8|confirmed'
+        ]);
+
+        $user->password = Hash::make($validated['password']);
+
+        $user->save();
+
+        return response()->json([
+            'message' => 'Password changed successfully'
+        ]);
+    }
 }

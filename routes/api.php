@@ -47,4 +47,9 @@ Route::middleware('auth:sanctum')->group(function () {
         UserManagementController::class,
         'toggleStatus'
     ]);
+
+    Route::patch('/admin/users/{id}/password', [
+        UserManagementController::class,
+        'changePassword'
+    ]);
 });

@@ -124,6 +124,12 @@ async function loadUsers() {
                     <button>Edit</button>
                 </a>
 
+                <a href="/admin/users/${user.id}/password">
+                    <button>
+                        Change Password
+                    </button>
+                </a>
+
                 <button onclick="toggleStatus(${user.id})">
                     ${user.is_active ? 'Deactivate' : 'Activate'}
                 </button>
