@@ -42,3 +42,10 @@ Route::get('/admin/users/{id}/edit', function ($id) {
 Route::get('/admin/users/{id}/password', function ($id) {
     return view('admin.users.password', ['id' => $id]);
 })->name('admin.users.password');
+
+
+
+// profile
+Route::get('/profile', function () {
+    return view('profile.edit');
+})->name('profile');

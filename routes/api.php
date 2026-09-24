@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
 
@@ -52,4 +53,28 @@ Route::middleware('auth:sanctum')->group(function () {
         UserManagementController::class,
         'changePassword'
     ]);
+});
+
+
+
+
+// manage profile
+
+Route::middleware('auth:sanctum')->group(function() {
+
+    Route::get('/profile', [
+        ProfileController::class,
+        'show'
+    ]);
+
+    Route::put('/profile', [
+        ProfileController::class,
+        'update'
+    ]);
+
+    Route::patch('/profile/password', [
+        ProfileController::class,
+        'changePassword'
+    ]);
+    
 });

@@ -70,9 +70,16 @@
                     dashboard.innerHTML = `
                         <h2>Welcome, ${result.admin.name}!</h2>
 
+                        <a href="/profile">
+                            <button>
+                                My Profile
+                            </button>
+                        </a>
+
                         <a href="/admin/users">
                             Manage User Accounts
                         </a>
+
                         <p>
                             Email: ${result.admin.email}
                         </p>
