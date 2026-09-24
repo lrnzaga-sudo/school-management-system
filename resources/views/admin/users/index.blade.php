@@ -36,6 +36,7 @@
                 <th>Email</th>
                 <th>Role</th>
                 <th>Actions</th>
+                <th>Status</th>
             </tr>
 
         </thead>
@@ -110,6 +111,10 @@ async function loadUsers() {
             <td>${user.role}</td>
 
             <td>
+                ${user.is_active ? 'Active' : 'Inactive'}
+            </td>
+
+            <td>
 
                 <a href="/admin/users/${user.id}">
                     <button>View</button>
@@ -118,6 +123,11 @@ async function loadUsers() {
                 <a href="/admin/users/${user.id}/edit">
                     <button>Edit</button>
                 </a>
+
+                <button onclick="toggleStatus(${user.id})">
+                    ${user.is_active ? 'Deactivate' : 'Activate'}
+                </button>
+                
 
                 <button onclick="deleteUser(${user.id})">
                     Delete
@@ -178,6 +188,29 @@ async function deleteUser(id) {
 
     }
 
+}
+
+async function toggleStatus(id) {
+
+    const response = await fetch(
+        `/api/admin/users/${id}/status`,
+        {
+            method: 'PATCH',
+
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        }
+    );
+
+    const result = await response.json();
+
+    alert(result.message);
+
+    if (response.ok) {
+        loadUsers();
+    }
 }
 
 

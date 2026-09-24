@@ -144,4 +144,26 @@ class UserManagementController extends Controller
 
         ]);
     }
+
+    public function toggleStatus($id)
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found.'
+            ], 404);
+        }
+
+        $user->is_active = !$user->is_active;
+
+        $user->save();
+
+        return response()->json([
+            'message' => $user->is_active
+                ? 'User activated successfully.'
+                : 'User deactivated successfully.',
+            'user' => $user
+        ]);
+    }
 }

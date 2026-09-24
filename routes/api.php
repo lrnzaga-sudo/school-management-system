@@ -43,4 +43,8 @@ Route::middleware('auth:sanctum')->group(function () {
         'destroy'
     ]);
 
+    Route::patch('/admin/users/{id}/status', [
+        UserManagementController::class,
+        'toggleStatus'
+    ]);
 });
