@@ -114,9 +114,10 @@
 <main>
     <header class="page-header">
         <h1>Manage Students</h1>
-        <button type="button" onclick="window.location.href='/admin/dashboard'">
-            Back to Dashboard
-        </button>
+        <div class="actions">
+            <button type="button" onclick="window.location.href='/admin/students/create'">Add Student</button>
+            <button type="button" onclick="window.location.href='/admin/dashboard'">Back to Dashboard</button>
+        </div>
     </header>
 
     <section aria-label="Student list">

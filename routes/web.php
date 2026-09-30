@@ -57,6 +57,10 @@ Route::get('/admin/students', function () {
     return view('admin.students.index');
 })->name('admin.students.index');
 
+Route::get('/admin/students/create', function () {
+    return view('admin.students.create');
+})->name('admin.students.create');
+
 Route::get('/admin/students/{id}', function ($id) {
     return view('admin.students.show', ['id' => $id]);
 })->name('admin.students.show');

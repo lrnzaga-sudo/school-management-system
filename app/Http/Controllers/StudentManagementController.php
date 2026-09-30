@@ -32,9 +32,42 @@ class StudentManagementController extends Controller
      */
     public function store(Request $request)
     {
-        // $validated = $request->validate([
-        //     ''
-        // ])
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+
+            'student_number' => 'required|string|unique:students,student_number',
+
+            'first_name' => 'required|string|max:255',
+
+            'middle_name' => 'nullable|string|max:255',
+
+            'last_name' => 'required|string|max:255',
+
+            'birth_date' => 'nullable|date',
+
+            'gender' => 'required|string|in:Male,Female',
+
+            'address' => 'required|string',
+
+            'phone' => 'required|string|max:20',
+        ]);
+
+        $student = Student::create([
+            'user_id' => $validated['user_id'],
+            'student_number' => $validated['student_number'],
+            'first_name' => $validated['first_name'],
+            'middle_name' => $validated['middle_name'],
+            'last_name' => $validated['last_name'],
+            'birth_date' => $validated['birth_date'],
+            'gender' => $validated['gender'],
+            'address' => $validated['address'],
+            'phone' => $validated['phone']
+        ]);
+
+        return response()->json([
+            'message' => 'Student created successfully',
+            'student' => $student
+        ], 201);
     }
 
     /**
