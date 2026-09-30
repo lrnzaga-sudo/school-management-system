@@ -101,7 +101,40 @@ class StudentManagementController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $student = Student::findOrFail($id);
+
+        if (!$student) {
+            return response()->json([
+                'message' => 'Student not found'
+            ], 404);
+        }
+
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id|unique:students,user_id,' . $student->id,
+
+            'student_number' => 'required|string|unique:students,student_number,' . $student->id,
+
+            'first_name' => 'required|string|max:255',
+
+            'middle_name' => 'nullable|string|max:255',
+
+            'last_name' => 'required|string|max:255',
+
+            'birth_date' => 'nullable|date',
+
+            'gender' => 'required|string|in:Male,Female',
+
+            'address' => 'required|string',
+
+            'phone' => 'required|string|max:20',
+        ]);
+
+        $student->update($validated);
+
+        return response()->json([
+            'message' => 'Student updated successfully.',
+            'student' => $student->fresh(),
+        ], 200);
     }
 
     /**
@@ -109,6 +142,18 @@ class StudentManagementController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $student = Student::findOrFail($id);
+
+        if (!$student) {
+            return response()->json([
+                'message' => 'Student not found'
+            ], 404);
+        }
+
+        $student->delete();
+
+        return response()->json([
+            'message' => 'Student deleted successfully'
+        ], 200);
     }
 }

@@ -64,6 +64,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/admin/students', [StudentManagementController::class, 'index']);
     Route::get('/admin/students/{id}', [StudentManagementController::class, 'show']);
     Route::post('/admin/students', [StudentManagementController::class, 'store']);
+    Route::put('/admin/students/{id}', [StudentManagementController::class, 'update']);
+    Route::delete('/admin/students/{id}', [StudentManagementController::class, 'destroy']);
 });
 
 

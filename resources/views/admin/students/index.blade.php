@@ -215,9 +215,10 @@
             addActionButton(actions, 'View', () => {
                 window.location.href = `/admin/students/${encodeURIComponent(student.id)}`;
             });
-            addActionButton(actions, 'Edit');
-            addActionButton(actions, 'Delete');
-            addActionButton(actions, 'Activate / Deactivate');
+            addActionButton(actions, 'Edit', () => {
+                window.location.href = `/admin/students/${encodeURIComponent(student.id)}/edit`;
+            });
+            addActionButton(actions, 'Delete', () => deleteStudent(student));
             row.appendChild(actions);
             tableBody.appendChild(row);
         });
@@ -248,6 +249,41 @@
         } catch (error) {
             tableMessage.hidden = false;
             tableMessage.textContent = error.message;
+        }
+    }
+
+    async function deleteStudent(student) {
+        const fullName = studentName(student);
+        if (!window.confirm(`Delete ${fullName}? This action cannot be undone.`)) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/admin/students/${encodeURIComponent(student.id)}`, {
+                method: 'DELETE',
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            if (response.status === 401) {
+                localStorage.removeItem('admin_token');
+                window.location.href = '/admin/login';
+                return;
+            }
+
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                throw new Error(result.message || 'Unable to delete student.');
+            }
+
+            students = students.filter(item => item.id !== student.id);
+            renderStudents();
+            tableMessage.textContent = result.message || 'Student deleted successfully.';
+            tableMessage.hidden = false;
+        } catch (error) {
+            window.alert(error.message);
         }
     }
 
