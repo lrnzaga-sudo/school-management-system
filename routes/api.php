@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StudentManagementController;
 use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
 
@@ -53,6 +54,15 @@ Route::middleware('auth:sanctum')->group(function () {
         UserManagementController::class,
         'changePassword'
     ]);
+
+
+
+
+    // Student Management
+
+
+    Route::get('/admin/students', [StudentManagementController::class, 'index']);
+    Route::get('/admin/students/{id}', [StudentManagementController::class, 'show']);
 });
 
 

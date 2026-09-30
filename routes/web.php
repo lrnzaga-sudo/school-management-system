@@ -49,3 +49,18 @@ Route::get('/admin/users/{id}/password', function ($id) {
 Route::get('/profile', function () {
     return view('profile.edit');
 })->name('profile');
+    
+
+// Student management
+
+Route::get('/admin/students', function () {
+    return view('admin.students.index');
+})->name('admin.students.index');
+
+Route::get('/admin/students/{id}', function ($id) {
+    return view('admin.students.show', ['id' => $id]);
+})->name('admin.students.show');
+
+Route::get('/admin/students/{id}/edit', function ($id) {
+    return view('admin.students.edit', ['id' => $id]);
+})->name('admin.students.edit');

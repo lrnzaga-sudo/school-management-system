@@ -70,14 +70,18 @@
                     dashboard.innerHTML = `
                         <h2>Welcome, ${result.admin.name}!</h2>
 
+                        <a href="/admin/users">
+                            Manage User Accounts
+                        </a>
+
+                        <a href="/admin/students">
+                            Student Management
+                        </a>
+
                         <a href="/profile">
                             <button>
                                 My Profile
                             </button>
-                        </a>
-
-                        <a href="/admin/users">
-                            Manage User Accounts
                         </a>
 
                         <p>
