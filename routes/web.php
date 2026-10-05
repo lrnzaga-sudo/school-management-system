@@ -68,3 +68,22 @@ Route::get('/admin/students/{id}', function ($id) {
 Route::get('/admin/students/{id}/edit', function ($id) {
     return view('admin.students.edit', ['id' => $id]);
 })->name('admin.students.edit');
+
+
+
+// Teacher management
+Route::get('/admin/teachers', function () {
+    return view('admin.teachers.index');
+})->name('admin.teachers.index');
+
+Route::get('/admin/teachers/create', function () {
+    return view('admin.teachers.create');
+})->name('admin.teachers.create');
+
+Route::get('/admin/teachers/{id}', function ($id) {
+    return view('admin.teachers.show', ['id' => $id]);
+})->name('admin.teachers.show');
+
+Route::get('/admin/teachers/{id}/edit', function ($id) {
+    return view('admin.teachers.edit', ['id' => $id]);
+})->name('admin.teachers.edit');

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Students</title>
+    <title>Manage Teachers</title>
     <style>
         body {
             margin: 0;
@@ -19,11 +19,18 @@
         }
 
         .page-header,
-        .toolbar {
+        .toolbar,
+        .header-actions,
+        .search-form,
+        .actions {
             display: flex;
             align-items: center;
+            gap: .75rem;
+        }
+
+        .page-header,
+        .toolbar {
             justify-content: space-between;
-            gap: 1rem;
         }
 
         .page-header {
@@ -53,8 +60,13 @@
             background: #eaf1ef;
         }
 
-        #studentSearch {
-            width: min(100%, 22rem);
+        .search-form {
+            width: min(100%, 28rem);
+        }
+
+        #teacherSearch {
+            flex: 1;
+            min-width: 0;
             padding: .6rem .75rem;
             border: 1px solid #aab8b5;
             border-radius: 4px;
@@ -90,10 +102,8 @@
         }
 
         .actions {
-            display: flex;
             flex-wrap: wrap;
-            gap: .4rem;
-            min-width: 280px;
+            min-width: 220px;
         }
 
         @media (max-width: 600px) {
@@ -102,46 +112,52 @@
             }
 
             .page-header,
-            .toolbar {
+            .toolbar,
+            .header-actions {
                 align-items: stretch;
                 flex-direction: column;
+            }
+
+            .search-form {
+                width: 100%;
             }
         }
     </style>
 </head>
-
 <body>
 <main>
     <header class="page-header">
-        <h1>Manage Students</h1>
-        <div class="actions">
-            <button type="button" onclick="window.location.href='/admin/students/create'">Add Student</button>
+        <h1>Manage Teachers</h1>
+        <div class="header-actions">
+            <button type="button" onclick="window.location.href='/admin/teachers/create'">Add Teacher</button>
             <button type="button" onclick="window.location.href='/admin/dashboard'">Back to Dashboard</button>
         </div>
     </header>
 
-    <section aria-label="Student list">
+    <section aria-label="Teacher list">
         <div class="toolbar">
-            <h2>Students</h2>
-            <input id="studentSearch" type="search" placeholder="Search students..." aria-label="Search students">
+            <h2>Teachers</h2>
+            <form id="teacherSearchForm" class="search-form" role="search">
+                <input id="teacherSearch" type="search" placeholder="Search teachers..." aria-label="Search teachers">
+                <button type="submit">Search</button>
+            </form>
         </div>
 
-        <p id="tableMessage" role="status">Loading students...</p>
+        <p id="tableMessage" role="status">Loading teachers...</p>
 
         <div class="table-wrap">
             <table>
                 <thead>
                     <tr>
-                        <th scope="col">Student #</th>
+                        <th scope="col">Employee #</th>
                         <th scope="col">Name</th>
-                        <th scope="col">Birth date</th>
                         <th scope="col">Gender</th>
                         <th scope="col">Phone</th>
                         <th scope="col">Address</th>
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
-                <tbody id="studentsTable"></tbody>
+                <tbody id="teachersTable"></tbody>
             </table>
         </div>
     </section>
@@ -149,17 +165,17 @@
 
 <script>
     const token = localStorage.getItem('admin_token');
-    const tableBody = document.getElementById('studentsTable');
-    const searchInput = document.getElementById('studentSearch');
+    const tableBody = document.getElementById('teachersTable');
+    const searchInput = document.getElementById('teacherSearch');
     const tableMessage = document.getElementById('tableMessage');
-    let students = [];
+    let teachers = [];
 
     if (!token) {
         window.location.href = '/admin/login';
     }
 
-    function studentName(student) {
-        return [student.first_name, student.middle_name, student.last_name]
+    function teacherName(teacher) {
+        return [teacher.first_name, teacher.middle_name, teacher.last_name]
             .filter(Boolean)
             .join(' ');
     }
@@ -170,73 +186,66 @@
         row.appendChild(cell);
     }
 
-    function addActionLink(container, label, href) {
-        const link = document.createElement('a');
-        link.href = href;
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.textContent = label;
-        link.appendChild(button);
-        container.appendChild(link);
-    }
-
-    function addActionButton(container, label, onClick = null) {
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.textContent = label;
-        if (onClick) {
-            button.addEventListener('click', onClick);
-        }
-        container.appendChild(button);
-    }
-
-    function renderStudents() {
+    function renderTeachers() {
         const query = searchInput.value.trim().toLowerCase();
-        const matchingStudents = students.filter(student => {
-            const searchableText = [
-                student.student_number,
-                studentName(student),
-                student.birth_date,
-                student.gender,
-                student.phone,
-                student.address
-            ].filter(Boolean).join(' ').toLowerCase();
-
-            return searchableText.includes(query);
-        });
+        const matchingTeachers = teachers.filter(teacher => [
+            teacher.employee_number,
+            teacherName(teacher),
+            teacher.gender,
+            teacher.phone,
+            teacher.address
+        ].filter(Boolean).join(' ').toLowerCase().includes(query));
 
         tableBody.replaceChildren();
-        tableMessage.hidden = matchingStudents.length > 0;
-        tableMessage.textContent = students.length === 0
-            ? 'No students available.'
-            : 'No students match your search.';
+        tableMessage.hidden = matchingTeachers.length > 0;
+        tableMessage.textContent = teachers.length === 0
+            ? 'No teachers available.'
+            : 'No teachers match your search.';
 
-        matchingStudents.forEach(student => {
+        matchingTeachers.forEach(teacher => {
             const row = document.createElement('tr');
-            addCell(row, student.student_number);
-            addCell(row, studentName(student));
-            addCell(row, student.birth_date);
-            addCell(row, student.gender);
-            addCell(row, student.phone);
-            addCell(row, student.address);
+            addCell(row, teacher.employee_number);
+            addCell(row, teacherName(teacher));
+            addCell(row, teacher.gender);
+            addCell(row, teacher.phone);
+            addCell(row, teacher.address);
 
             const actions = document.createElement('td');
             actions.className = 'actions';
-            const studentId = encodeURIComponent(student.id);
-            addActionLink(actions, 'View', `/admin/students/${studentId}`);
-            addActionLink(actions, 'Edit', `/admin/students/${studentId}/edit`);
-            addActionButton(actions, 'Delete', () => deleteStudent(student));
+            ['View', 'Edit', 'Delete'].forEach(label => {
+                if (label === 'View' || label === 'Edit') {
+                    const link = document.createElement('a');
+                    const teacherId = encodeURIComponent(teacher.id);
+                    link.href = label === 'View'
+                        ? `/admin/teachers/${teacherId}`
+                        : `/admin/teachers/${teacherId}/edit`;
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.textContent = label;
+                    link.appendChild(button);
+                    actions.appendChild(link);
+                    return;
+                }
+
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.textContent = label;
+                if (label === 'Delete') {
+                    button.addEventListener('click', () => deleteTeacher(teacher));
+                }
+                actions.appendChild(button);
+            });
             row.appendChild(actions);
             tableBody.appendChild(row);
         });
     }
 
-    async function loadStudents() {
+    async function loadTeachers() {
         try {
-            const response = await fetch('/api/admin/students', {
+            const response = await fetch('/api/admin/teachers', {
                 headers: {
                     Accept: 'application/json',
-                    Authorization: `Bearer ${token}`
+                    Authorization: 'Bearer ' + token
                 }
             });
 
@@ -247,55 +256,59 @@
             }
 
             if (!response.ok) {
-                throw new Error('Unable to load students.');
+                throw new Error('Unable to load teachers.');
             }
 
             const result = await response.json();
-            students = result.students || [];
-            renderStudents();
+            teachers = result.teachers;
+            renderTeachers();
         } catch (error) {
             tableMessage.hidden = false;
             tableMessage.textContent = error.message;
         }
     }
 
-    async function deleteStudent(student) {
-        const fullName = studentName(student);
-        if (!window.confirm(`Delete ${fullName}? This action cannot be undone.`)) {
+    async function deleteTeacher(teacher) {
+        const name = teacherName(teacher);
+        if (!window.confirm(`Delete ${name}? This action cannot be undone.`)) {
             return;
         }
 
         try {
-            const response = await fetch(`/api/admin/students/${encodeURIComponent(student.id)}`, {
+            const response = await fetch(`/api/admin/teachers/${encodeURIComponent(teacher.id)}`, {
                 method: 'DELETE',
                 headers: {
                     Accept: 'application/json',
-                    Authorization: `Bearer ${token}`
+                    Authorization: 'Bearer ' + token
                 }
             });
 
+            const result = await response.json().catch(() => ({}));
             if (response.status === 401) {
                 localStorage.removeItem('admin_token');
                 window.location.href = '/admin/login';
                 return;
             }
 
-            const result = await response.json().catch(() => ({}));
             if (!response.ok) {
-                throw new Error(result.message || 'Unable to delete student.');
+                throw new Error(result.message || 'Unable to delete teacher.');
             }
 
-            students = students.filter(item => item.id !== student.id);
-            renderStudents();
-            tableMessage.textContent = result.message || 'Student deleted successfully.';
+            teachers = teachers.filter(item => item.id !== teacher.id);
+            renderTeachers();
+            tableMessage.textContent = result.message || 'Teacher deleted successfully.';
             tableMessage.hidden = false;
         } catch (error) {
             window.alert(error.message);
         }
     }
 
-    searchInput.addEventListener('input', renderStudents);
-    loadStudents();
+    document.getElementById('teacherSearchForm')
+        .addEventListener('submit', event => {
+            event.preventDefault();
+            renderTeachers();
+        });
+    loadTeachers();
 </script>
 </body>
 </html>

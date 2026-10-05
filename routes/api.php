@@ -3,8 +3,10 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentManagementController;
+use App\Http\Controllers\TeacherManagementController;
 use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
+
 
 Route::post('/admin/register', [AdminController::class, 'register']);
 
@@ -20,41 +22,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // User Management
 
-    Route::get('/admin/users', [
-        UserManagementController::class,
-        'index'
-    ]);
-
-    Route::get('/admin/users/{id}', [
-        UserManagementController::class,
-        'show'
-    ]);
-
-    Route::post('/admin/users', [
-        UserManagementController::class,
-        'store'
-    ]);
-
-    Route::put('/admin/users/{id}', [
-        UserManagementController::class,
-        'update'
-    ]);
-
-    Route::delete('/admin/users/{id}', [
-        UserManagementController::class,
-        'destroy'
-    ]);
-
-    Route::patch('/admin/users/{id}/status', [
-        UserManagementController::class,
-        'toggleStatus'
-    ]);
-
-    Route::patch('/admin/users/{id}/password', [
-        UserManagementController::class,
-        'changePassword'
-    ]);
-
+    Route::get('/admin/users', [UserManagementController::class, 'index']);
+    Route::get('/admin/users/{id}', [UserManagementController::class, 'show']);
+    Route::post('/admin/users', [UserManagementController::class, 'store']);
+    Route::put('/admin/users/{id}', [UserManagementController::class, 'update']);
+    Route::delete('/admin/users/{id}', [UserManagementController::class, 'destroy']);
+    Route::patch('/admin/users/{id}/status', [UserManagementController::class, 'toggleStatus']);
+    Route::patch('/admin/users/{id}/password', [UserManagementController::class, 'changePassword']);
 
 
 
@@ -66,6 +40,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/admin/students', [StudentManagementController::class, 'store']);
     Route::put('/admin/students/{id}', [StudentManagementController::class, 'update']);
     Route::delete('/admin/students/{id}', [StudentManagementController::class, 'destroy']);
+
+
+
+
+    // Teacher Management
+
+    Route::get('/admin/teachers', [TeacherManagementController::class, 'index']);
+    Route::get('/admin/teachers/{id}', [TeacherManagementController::class, 'show']);
+    Route::post('/admin/teachers', [TeacherManagementController::class, 'store']);
+    Route::put('/admin/teachers/{id}', [TeacherManagementController::class, 'update']);
+    Route::delete('/admin/teachers/{id}', [TeacherManagementController::class, 'destroy']);
 });
 
 
@@ -75,19 +60,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::middleware('auth:sanctum')->group(function() {
 
-    Route::get('/profile', [
-        ProfileController::class,
-        'show'
-    ]);
-
-    Route::put('/profile', [
-        ProfileController::class,
-        'update'
-    ]);
-
-    Route::patch('/profile/password', [
-        ProfileController::class,
-        'changePassword'
-    ]);
+    Route::get('/profile', [ProfileController::class, 'show']);
+    Route::put('/profile', [ProfileController::class, 'update']);
+    Route::patch('/profile/password', [ProfileController::class, 'changePassword']);
     
 });

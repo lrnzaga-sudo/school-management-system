@@ -9,9 +9,27 @@ use Illuminate\Support\Facades\Hash;
 class UserManagementController extends Controller
 {
     // Get all users
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::all();
+        $validated = $request->validate([
+            'q' => 'nullable|string|max:255',
+        ]);
+
+        $search = trim($validated['q'] ?? '');
+
+        $users = User::query()
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('role', 'like', "%{$search}%");
+
+                    if (ctype_digit($search)) {
+                        $query->orWhere('id', (int) $search);
+                    }
+                });
+            })
+            ->get();
 
         return response()->json([
             'users' => $users

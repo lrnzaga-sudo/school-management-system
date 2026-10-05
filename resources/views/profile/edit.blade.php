@@ -11,26 +11,139 @@
     >
 
     <title>My Profile</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 2rem;
+            color: #17212b;
+            font: 16px/1.5 Arial, sans-serif;
+            background: #f4f7f6;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h1,
+        h2 {
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+        }
+
+        .profile-section {
+            margin-bottom: 1.5rem;
+            padding: 1.25rem;
+            border: 1px solid #d4ddda;
+            background: #fff;
+        }
+
+        .profile-section h2 {
+            margin-bottom: 1rem;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        form div {
+            display: grid;
+            gap: .35rem;
+        }
+
+        form br {
+            display: none;
+        }
+
+        label {
+            font-weight: 600;
+        }
+
+        input,
+        button {
+            font: inherit;
+        }
+
+        input {
+            box-sizing: border-box;
+            width: 100%;
+            padding: .6rem .7rem;
+            border: 1px solid #aab8b5;
+            border-radius: 4px;
+        }
+
+        input[readonly] {
+            color: #56645f;
+            background: #f4f7f6;
+        }
+
+        button {
+            width: fit-content;
+            padding: .55rem .85rem;
+            border: 1px solid #aab8b5;
+            border-radius: 4px;
+            color: #17212b;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #eaf1ef;
+        }
+
+        form button {
+            grid-column: 1 / -1;
+        }
+
+        .message {
+            margin: 1rem 0 0;
+            color: #56645f;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 1rem;
+            }
+
+            .page-header {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            form {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 
 </head>
 
 <body>
+<main>
+    <header class="page-header">
+        <h1>My Profile</h1>
+        <button type="button" onclick="window.location.href='/admin/dashboard'">
+            Back to Dashboard
+        </button>
+    </header>
 
-    <h1>My Profile</h1>
+    <section class="profile-section" aria-labelledby="profileInformationHeading">
+        <h2 id="profileInformationHeading">Profile Information</h2>
 
-    <button onclick="window.location.href='/admin/dashboard'">
-        Back to Dashboard
-    </button>
-
-    <hr>
-
-
-    <!-- PROFILE INFORMATION -->
-
-    <h2>Profile Information</h2>
-
-
-    <form id="profileForm">
+        <form id="profileForm">
 
         <div>
 
@@ -84,21 +197,14 @@
             Save Changes
         </button>
 
-    </form>
+        </form>
+        <p id="profileMessage" class="message" role="status"></p>
+    </section>
 
+    <section class="profile-section" aria-labelledby="changePasswordHeading">
+        <h2 id="changePasswordHeading">Change Password</h2>
 
-    <p id="profileMessage"></p>
-
-
-    <hr>
-
-
-    <!-- CHANGE PASSWORD -->
-
-    <h2>Change Password</h2>
-
-
-    <form id="passwordForm">
+        <form id="passwordForm">
 
         <div>
 
@@ -158,10 +264,10 @@
             Change Password
         </button>
 
-    </form>
-
-
-    <p id="passwordMessage"></p>
+        </form>
+        <p id="passwordMessage" class="message" role="status"></p>
+    </section>
+</main>
 
 
 <script>

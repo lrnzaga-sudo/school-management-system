@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Student</title>
+    <title>Edit Teacher</title>
     <style>
         body {
             margin: 0;
@@ -101,6 +101,10 @@
             color: #9a3f32;
         }
 
+        #loadingMessage {
+            color: #56645f;
+        }
+
         @media (max-width: 600px) {
             body {
                 padding: 1rem;
@@ -118,22 +122,18 @@
     </style>
 </head>
 <body>
-<main id="studentPage" data-student-id="{{ $id }}">
+<main id="teacherPage" data-teacher-id="{{ $id }}">
     <header>
-        <h1>Edit Student</h1>
-        <a class="button" id="backToStudents" href="/admin/students">Back to Students</a>
+        <h1>Edit Teacher</h1>
+        <a class="button" id="backToTeachers" href="/admin/teachers">Back to Teachers</a>
     </header>
 
-    <p id="message" role="status">Loading student information...</p>
+    <p id="loadingMessage" role="status">Loading teacher information...</p>
 
-    <form id="editStudentForm" hidden>
+    <form id="editTeacherForm" hidden>
         <label>
-            User ID
-            <input name="user_id" type="number" min="1" required>
-        </label>
-        <label>
-            Student number
-            <input name="student_number" type="text" maxlength="255" required>
+            Employee number
+            <input name="employee_number" type="text" maxlength="50" required>
         </label>
         <label>
             First name
@@ -167,7 +167,7 @@
             Address
             <textarea name="address" required></textarea>
         </label>
-        <p id="formError" role="alert" hidden></p>
+        <p id="message" role="alert" hidden></p>
         <div class="form-actions">
             <button type="submit">Save Changes</button>
         </div>
@@ -176,23 +176,23 @@
 
 <script>
     const token = localStorage.getItem('admin_token');
-    const studentId = document.getElementById('studentPage').dataset.studentId;
-    const form = document.getElementById('editStudentForm');
+    const teacherId = document.getElementById('teacherPage').dataset.teacherId;
+    const form = document.getElementById('editTeacherForm');
+    const loadingMessage = document.getElementById('loadingMessage');
     const message = document.getElementById('message');
-    const formError = document.getElementById('formError');
 
     if (!token) {
         window.location.href = '/admin/login';
     } else {
-        loadStudent();
+        loadTeacher();
     }
 
-    async function loadStudent() {
+    async function loadTeacher() {
         try {
-            const response = await fetch(`/api/admin/students/${encodeURIComponent(studentId)}`, {
+            const response = await fetch(`/api/admin/teachers/${encodeURIComponent(teacherId)}`, {
                 headers: {
                     Accept: 'application/json',
-                    Authorization: `Bearer ${token}`
+                    Authorization: 'Bearer ' + token
                 }
             });
 
@@ -204,45 +204,42 @@
 
             const result = await response.json();
             if (!response.ok) {
-                throw new Error(result.message || 'Unable to load student information.');
+                throw new Error(result.message || 'Unable to load teacher information.');
             }
 
-            for (const [name, value] of Object.entries(result.student)) {
+            for (const [name, value] of Object.entries(result.teacher)) {
                 if (form.elements[name]) {
                     form.elements[name].value = value ?? '';
                 }
             }
 
-            message.hidden = true;
+            loadingMessage.hidden = true;
             form.hidden = false;
         } catch (error) {
-            message.textContent = error.message;
+            loadingMessage.textContent = error.message;
         }
     }
 
     form.addEventListener('submit', async event => {
         event.preventDefault();
-        formError.hidden = true;
+        message.hidden = true;
 
-        const data = Array.from(form.elements).reduce((values, field) => {
-            if (field.name) {
-                values[field.name] = field.value;
-            }
-            return values;
-        }, {});
+        const data = Object.fromEntries(new FormData(form).entries());
+        data.middle_name = data.middle_name || null;
+        data.birth_date = data.birth_date || null;
 
         try {
-            const response = await fetch(`/api/admin/students/${encodeURIComponent(studentId)}`, {
+            const response = await fetch(`/api/admin/teachers/${encodeURIComponent(teacherId)}`, {
                 method: 'PUT',
                 headers: {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
+                    Authorization: 'Bearer ' + token
                 },
                 body: JSON.stringify(data)
             });
 
-            const result = await response.json();
+            const result = await response.json().catch(() => ({}));
             if (response.status === 401) {
                 localStorage.removeItem('admin_token');
                 window.location.href = '/admin/login';
@@ -253,13 +250,13 @@
                 const validationMessages = result.errors
                     ? Object.values(result.errors).flat().join(' ')
                     : '';
-                throw new Error(validationMessages || result.message || 'Unable to update student.');
+                throw new Error(validationMessages || result.message || 'Unable to update teacher.');
             }
 
-            window.location.href = `/admin/students/${encodeURIComponent(studentId)}`;
+            window.location.href = `/admin/teachers/${encodeURIComponent(teacherId)}`;
         } catch (error) {
-            formError.textContent = error.message;
-            formError.hidden = false;
+            message.textContent = error.message;
+            message.hidden = false;
         }
     });
 </script>

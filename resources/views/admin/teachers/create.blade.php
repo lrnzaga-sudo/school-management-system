@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Student</title>
+    <title>Add Teacher</title>
     <style>
         body {
             margin: 0;
@@ -28,7 +28,6 @@
 
         h1 {
             margin: 0;
-            font-size: 1.75rem;
         }
 
         form {
@@ -73,27 +72,18 @@
             grid-column: 1 / -1;
         }
 
-        button,
-        .button {
+        button {
             width: fit-content;
             padding: .55rem .85rem;
             border: 1px solid #aab8b5;
             border-radius: 4px;
             color: #17212b;
             background: #fff;
-            text-decoration: none;
             cursor: pointer;
         }
 
-        button:hover,
-        .button:hover {
+        button:hover {
             background: #eaf1ef;
-        }
-
-        .form-actions {
-            display: flex;
-            gap: .5rem;
-            grid-column: 1 / -1;
         }
 
         #message {
@@ -118,22 +108,20 @@
     </style>
 </head>
 <body>
-<main id="studentPage" data-student-id="{{ $id }}">
+<main>
     <header>
-        <h1>Edit Student</h1>
-        <a class="button" id="backToStudents" href="/admin/students">Back to Students</a>
+        <h1>Add Teacher</h1>
+        <button type="button" onclick="window.location.href='/admin/teachers'">Back to Teachers</button>
     </header>
 
-    <p id="message" role="status">Loading student information...</p>
-
-    <form id="editStudentForm" hidden>
+    <form id="createTeacherForm">
         <label>
-            User ID
+            Existing user ID
             <input name="user_id" type="number" min="1" required>
         </label>
         <label>
-            Student number
-            <input name="student_number" type="text" maxlength="255" required>
+            Employee number
+            <input name="employee_number" type="text" maxlength="50" required>
         </label>
         <label>
             First name
@@ -167,82 +155,41 @@
             Address
             <textarea name="address" required></textarea>
         </label>
-        <p id="formError" role="alert" hidden></p>
-        <div class="form-actions">
-            <button type="submit">Save Changes</button>
-        </div>
+        <p id="message" role="alert" hidden></p>
+        <button type="submit">Add Teacher</button>
     </form>
 </main>
 
 <script>
     const token = localStorage.getItem('admin_token');
-    const studentId = document.getElementById('studentPage').dataset.studentId;
-    const form = document.getElementById('editStudentForm');
+    const form = document.getElementById('createTeacherForm');
     const message = document.getElementById('message');
-    const formError = document.getElementById('formError');
 
     if (!token) {
         window.location.href = '/admin/login';
-    } else {
-        loadStudent();
-    }
-
-    async function loadStudent() {
-        try {
-            const response = await fetch(`/api/admin/students/${encodeURIComponent(studentId)}`, {
-                headers: {
-                    Accept: 'application/json',
-                    Authorization: `Bearer ${token}`
-                }
-            });
-
-            if (response.status === 401) {
-                localStorage.removeItem('admin_token');
-                window.location.href = '/admin/login';
-                return;
-            }
-
-            const result = await response.json();
-            if (!response.ok) {
-                throw new Error(result.message || 'Unable to load student information.');
-            }
-
-            for (const [name, value] of Object.entries(result.student)) {
-                if (form.elements[name]) {
-                    form.elements[name].value = value ?? '';
-                }
-            }
-
-            message.hidden = true;
-            form.hidden = false;
-        } catch (error) {
-            message.textContent = error.message;
-        }
     }
 
     form.addEventListener('submit', async event => {
         event.preventDefault();
-        formError.hidden = true;
+        message.hidden = true;
 
-        const data = Array.from(form.elements).reduce((values, field) => {
-            if (field.name) {
-                values[field.name] = field.value;
-            }
-            return values;
-        }, {});
+        const data = Object.fromEntries(new FormData(form).entries());
+        data.user_id = Number(data.user_id);
+        data.birth_date = data.birth_date || null;
+        data.middle_name = data.middle_name || null;
 
         try {
-            const response = await fetch(`/api/admin/students/${encodeURIComponent(studentId)}`, {
-                method: 'PUT',
+            const response = await fetch('/api/admin/teachers', {
+                method: 'POST',
                 headers: {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
+                    Authorization: 'Bearer ' + token
                 },
                 body: JSON.stringify(data)
             });
 
-            const result = await response.json();
+            const result = await response.json().catch(() => ({}));
             if (response.status === 401) {
                 localStorage.removeItem('admin_token');
                 window.location.href = '/admin/login';
@@ -253,13 +200,13 @@
                 const validationMessages = result.errors
                     ? Object.values(result.errors).flat().join(' ')
                     : '';
-                throw new Error(validationMessages || result.message || 'Unable to update student.');
+                throw new Error(validationMessages || result.message || 'Unable to add teacher.');
             }
 
-            window.location.href = `/admin/students/${encodeURIComponent(studentId)}`;
+            window.location.href = '/admin/teachers';
         } catch (error) {
-            formError.textContent = error.message;
-            formError.hidden = false;
+            message.textContent = error.message;
+            message.hidden = false;
         }
     });
 </script>
