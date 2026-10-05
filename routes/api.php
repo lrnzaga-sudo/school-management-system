@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentManagementController;
+use App\Http\Controllers\SubjectManagementController;
 use App\Http\Controllers\TeacherManagementController;
 use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
@@ -51,6 +52,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/admin/teachers', [TeacherManagementController::class, 'store']);
     Route::put('/admin/teachers/{id}', [TeacherManagementController::class, 'update']);
     Route::delete('/admin/teachers/{id}', [TeacherManagementController::class, 'destroy']);
+
+
+
+
+
+
+    // Subject Management
+
+    Route::get('/admin/subjects', [SubjectManagementController::class, 'index']);
+    Route::post('/admin/subjects', [SubjectManagementController::class, 'store']);
+    Route::get('/admin/subjects/{id}', [SubjectManagementController::class, 'show']);
+    Route::put('/admin/subjects/{id}', [SubjectManagementController::class, 'update']);
+    Route::delete('/admin/subjects/{id}', [SubjectManagementController::class, 'destroy']);
 });
 
 

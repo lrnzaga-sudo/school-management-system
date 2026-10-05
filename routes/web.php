@@ -87,3 +87,26 @@ Route::get('/admin/teachers/{id}', function ($id) {
 Route::get('/admin/teachers/{id}/edit', function ($id) {
     return view('admin.teachers.edit', ['id' => $id]);
 })->name('admin.teachers.edit');
+
+
+
+
+
+
+// Subject Management
+
+Route::get('/admin/subjects/create', function () {
+    return view('admin.subjects.create');
+})->name('admin.subjects.create');
+
+Route::get('/admin/subjects', function () {
+    return view('admin.subjects.index');
+})->name('admin.subjects.index');
+
+Route::get('/admin/subjects/{id}', function ($id) {
+    return view('admin.subjects.show', ['id' => $id]);
+})->name('admin.subjects.show');
+
+Route::get('/admin/subjects/{id}/edit', function ($id) {
+    return view('admin.subjects.edit', ['id' => $id]);
+})->name('admin.subjects.edit');

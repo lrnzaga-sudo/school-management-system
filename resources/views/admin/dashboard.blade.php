@@ -255,7 +255,8 @@
                     [
                         ['/admin/users', 'Manage User Accounts', 'Manage user access and account settings'],
                         ['/admin/students', 'Student Management', 'View and manage student records'],
-                        ['/admin/teachers', 'Teacher Management', 'View and manage teacher records']
+                        ['/admin/teachers', 'Teacher Management', 'View and manage teacher records'],
+                        ['/admin/subjects', 'Subject Management', 'View and manage subject records']
                     ].forEach(([href, title, detail]) => {
                         const link = document.createElement('a');
                         link.className = 'management-card';
